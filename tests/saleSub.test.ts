@@ -7,7 +7,7 @@ import { MachineSaleSubscriber } from "../subscribers/machineSaleSubscriber";
 describe("Test Sale Subscriber", () => {
     it("Test sale event : machine T-001 stock should reduce by 5, while T-002 stock remains the same.", () => {
         const machines: Machine[] = [ new Machine ('T-001'), new Machine ('T-002') ]
-        const testSaleSub = new MachineSaleSubscriber(machines)
+        const testSaleSub = new MachineSaleSubscriber('sale-test', machines)
         const testPubSub = new pubSubService()
         testPubSub.subscribe(testSaleSub)
 
@@ -17,9 +17,28 @@ describe("Test Sale Subscriber", () => {
         expect(machines[1].stockLevel).toEqual(10)
     })
 
+    it("Test sale event : machine T-001 stock should not reduce since stock is not enough for sale, and publish LowStockEvent", () => {
+        const machines: Machine[] = [ new Machine('T-001', 1)]
+        const testSaleSub = new MachineSaleSubscriber('sale-test', machines)
+        const testPubSub = new pubSubService()
+        testPubSub.subscribe(testSaleSub)
+
+        const pubSubSpyOn = jest.spyOn(testPubSub, 'publish')
+
+        expect(pubSubSpyOn).not.toHaveBeenCalled()
+
+        testPubSub.publish(new MachineSaleEvent(2, 'T-001'))
+
+        expect(machines[0].stockLevel).toEqual(1)
+
+        expect(pubSubSpyOn).toHaveBeenCalledTimes(2)
+        expect(pubSubSpyOn).toHaveBeenCalledWith(new LowStockWarningEvent('T-001'))
+
+    })
+
     it("Test sale event to warning stock level event : Pubsub should call publish 2 times, and one of them should be LowStockWarningEvent", () => {
         const machines: Machine[] = [ new Machine ('T-001') ]
-        const testSaleSub = new MachineSaleSubscriber(machines)
+        const testSaleSub = new MachineSaleSubscriber('sale-test', machines)
         const testPubSub = new pubSubService()
         testPubSub.subscribe(testSaleSub)
 
@@ -35,7 +54,7 @@ describe("Test Sale Subscriber", () => {
 
     it("Test sale event with low stock machine : Pubsub should call publish 1 time, LowStockWarningEvent should has not been called", () => {
         const machines: Machine[] = [ new Machine ('T-001', 2) ]
-        const testSaleSub = new MachineSaleSubscriber(machines)
+        const testSaleSub = new MachineSaleSubscriber('sale-test', machines)
         const testPubSub = new pubSubService()
         testPubSub.subscribe(testSaleSub)
 
@@ -51,7 +70,7 @@ describe("Test Sale Subscriber", () => {
 
     it("Test subscibing after publish event : T-001 stock level should remains the same.", () => {
         const machines: Machine[] = [ new Machine('T-001') ]
-        const testSaleSub = new MachineSaleSubscriber(machines)
+        const testSaleSub = new MachineSaleSubscriber('sale-test', machines)
         const testPubSub = new pubSubService();
 
         testPubSub.publish(new MachineSaleEvent(8, 'T-001'))

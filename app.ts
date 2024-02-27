@@ -38,9 +38,9 @@ const eventGenerator = (): IEvent => {
   const pss = new pubSubService();
 
   // create a machine sale event subscriber. inject the machines (all subscribers should do this)
-  const saleSubscriber = new MachineSaleSubscriber(machines);
-  const refillSubscriber = new MachineRefillSubscriber(machines);
-  const stockWarningSubscriber = new MachineStockWarningSubscriber(machines);
+  const saleSubscriber = new MachineSaleSubscriber('sale-01', machines);
+  const refillSubscriber = new MachineRefillSubscriber('refill-01', machines);
+  const stockWarningSubscriber = new MachineStockWarningSubscriber('stockCheck-01', machines);
 
   // create the PubSub service
   pss.subscribe(saleSubscriber)

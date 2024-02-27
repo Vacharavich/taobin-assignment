@@ -5,12 +5,16 @@ import { Machine } from "../machine";
 
 class MachineRefillSubscriber implements ISubscriber {
     public machines: Machine[];
+    private readonly subID: string;
   
-    constructor (machines: Machine[]) {
+    constructor (subID: string, machines: Machine[]) {
       this.machines = machines
+      this.subID = subID
     }
   
-        handle(event: MachineRefillEvent, pubSub?: IPublishSubscribeService): void {
+    getSubID() {return this.subID}
+
+    handle(event: MachineRefillEvent, pubSub?: IPublishSubscribeService): void {
         if(event.type() !== 'refill') return
 
         for(const m of this.machines) {

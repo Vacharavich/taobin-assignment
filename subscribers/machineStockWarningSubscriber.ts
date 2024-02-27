@@ -6,10 +6,14 @@ import { Machine } from "../machine"
 
 class MachineStockWarningSubscriber implements ISubscriber {
     public machines: Machine[]
+    private readonly subID: string
   
-    constructor(machines: Machine[]) {
+    constructor(subID: string, machines: Machine[]) {
       this.machines = machines
+      this.subID = subID
     }
+
+    getSubID() {return this.subID}
   
     handle(event: LowStockWarningEvent | StockLevelOkEvent, pubSub?: IPublishSubscribeService): void {
         if(event.type() === 'stockWarning') {

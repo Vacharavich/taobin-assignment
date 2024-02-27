@@ -7,7 +7,7 @@ import { MachineRefillSubscriber } from "../subscribers/machineRefillSubscriber"
 describe("Test Refill Subscriber", () => {
     it("Test refill event : machine T-001 stock should increase by 5, while T-002 stock remains the same.", () => {
         const machines: Machine[] = [ new Machine('T-001'), new Machine('T-002') ]
-        const testRefillSub = new MachineRefillSubscriber(machines)
+        const testRefillSub = new MachineRefillSubscriber('refill-test', machines)
         const testPubSub = new pubSubService();
 
         testPubSub.subscribe(testRefillSub)
@@ -20,7 +20,7 @@ describe("Test Refill Subscriber", () => {
 
     it("Test refill event to stock level ok event : Pubsub should call publish 2 times, and one of them should be StockLevelOkEvent.", () => {
         const machines: Machine[] = [ new Machine('T-001', 2)]
-        const testRefillSub = new MachineRefillSubscriber(machines)
+        const testRefillSub = new MachineRefillSubscriber('refill-test', machines)
         const testPubSub = new pubSubService();
 
         testPubSub.subscribe(testRefillSub)
@@ -37,7 +37,7 @@ describe("Test Refill Subscriber", () => {
 
     it("Test refill event to not low stock machine : Pubsub should call publish 1 time, StockLevelOkEvent should has not been called.", () => {
         const machines: Machine[] = [ new Machine('T-001')]
-        const testRefillSub = new MachineRefillSubscriber(machines)
+        const testRefillSub = new MachineRefillSubscriber('refill-test', machines)
         const testPubSub = new pubSubService();
 
         testPubSub.subscribe(testRefillSub)
@@ -54,7 +54,7 @@ describe("Test Refill Subscriber", () => {
 
     it("Test subscribing after publish event : T-001 stock level should remains the same.", () => {
         const machines: Machine[] = [ new Machine('T-001')]
-        const testRefillSub = new MachineRefillSubscriber(machines)
+        const testRefillSub = new MachineRefillSubscriber('refill-test', machines)
         const testPubSub = new pubSubService();
 
         testPubSub.publish(new MachineRefillEvent(5, 'T-001'))

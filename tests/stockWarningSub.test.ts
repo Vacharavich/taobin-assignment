@@ -9,7 +9,7 @@ import { MachineStockWarningSubscriber } from "../subscribers/machineStockWarnin
 describe("Test Stock Warning Subscriber", () => {
     it("Test warning event : machine T-001 lowStockWarning will become true, and also publish refill event", () => {
         const machines: Machine[] = [ new Machine('T-001', 3) ]
-        const testStockWarningSub = new MachineStockWarningSubscriber(machines)
+        const testStockWarningSub = new MachineStockWarningSubscriber('stockCheck-test', machines)
         const testPubSub = new pubSubService();
 
         testPubSub.subscribe(testStockWarningSub);
@@ -30,8 +30,8 @@ describe("Test Stock Warning Subscriber", () => {
 
     it("Test stock level ok event : machine T-001 after the refill event from low stock warning, lowStockWarning of T-001 machine shold be false", () => {
         const machines: Machine[] = [ new Machine('T-001', 1) ]
-        const testStockWarningSub = new MachineStockWarningSubscriber(machines)
-        const testRefillSub = new MachineRefillSubscriber(machines);
+        const testStockWarningSub = new MachineStockWarningSubscriber('stockCheck-test', machines)
+        const testRefillSub = new MachineRefillSubscriber('refill-test', machines);
 
         const testPubSub = new pubSubService();
 
@@ -46,7 +46,7 @@ describe("Test Stock Warning Subscriber", () => {
 
     it("Test subscribing after publish event : T-001 and T-002 lowStockWarning should not changed.", () => {
         const machines: Machine[] = [ new Machine('T-001', 2, false), new Machine('T-002', 8, true) ]
-        const teststockWarningSub = new MachineStockWarningSubscriber(machines)
+        const teststockWarningSub = new MachineStockWarningSubscriber('stockCheck-test', machines)
         const testPubSub = new pubSubService();
 
         testPubSub.publish(new LowStockWarningEvent('T-001')) //Change T-001 lowStockWarning should not change from false to true
