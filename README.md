@@ -7,3 +7,5 @@ From the base given by assignment. I chose to modify machines a little bit - to 
 For SaleSubscriber, I add stockLevel checking before sale event happen to make sure that sale will not occur if the machine stock is not enough to create the transaction.
 
 I also create test case to cover all scenario that could happen, which cover Note II that given in the instruction.
+
+To run the project, you can run "npm run dev" and it will run the app.ts, or you can run "npm run test" to run the test suite.
